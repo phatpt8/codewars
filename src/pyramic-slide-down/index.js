@@ -6,19 +6,24 @@ const input = [
 ];
 
 const pyramicSlideDown = pyramid => {
-  let result = 0;
-  let p = [];
-
-  for (var i = 0; i < pyramid.length; i++) {
-    const pyrFloor = pyramid[i];
-    p[i] = [];
-    for (var j = 0; j < pyrFloor.length; j++) {
-      const node = pyramid[i][j];
-      p[i].push(node);
-    }
+  const length = pyramid.length;
+  const root = pyramid[0][0];
+  const loop = arr => {
+    const idx = Math.floor(Math.random() * 2);
+    return {
+      value:  arr[idx],
+      idx,
+    };
   }
-console.log(p);
-  return result;
+
+  let result = root;
+  let lastIdx;
+  for (var i = 1; i < pyramid.length; i++) {
+    const floor = loop(pyramid[i]);
+    result += floor.value;
+    lastIdx = idx;
+  }
+  console.log(result);
 }
 
 pyramicSlideDown(input);
