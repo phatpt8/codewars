@@ -6,7 +6,7 @@ const solution = (array) => {
   const compareString = array.toString();
   let idx = 0;
   array.forEach((city) => {
-    let newCity = city.toLowerCase();
+    let newCity = city;
     const charLen = city.length;
 
     if (rotateCity.includes(city)) {
@@ -30,6 +30,7 @@ const solution = (array) => {
     idx++;
   });
 
+  console.log(result);
   return result;
 }
 
