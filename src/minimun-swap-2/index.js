@@ -7,8 +7,8 @@ const minimumSwaps = arr => {
   
   for (let i = 0; i < len;i++) {
       loop++;
-      console.log(arr[i], i);
       if (arr[i] == i + 1) continue;
+      
       let tmp = arr[arr[i] - 1];
       arr[arr[i] - 1] = arr[i];
       arr[i] = tmp;
