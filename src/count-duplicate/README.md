@@ -1,0 +1,1 @@
+Count duplicate occurances in array
