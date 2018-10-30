@@ -48,3 +48,8 @@ const compose = (...fns) =>
 pipe = (...fns) => x => fns.reduce((v, f) => f(v), x);
 
 
+
+// const curry = (fn, ...args) => (...argum) => fn.apply(this, args.concat(argum));
+// const add = (...args) => args.reduce((a, b) => a + b);
+// const compose = (...functions) => x => functions.reduceRight((args, fn) => fn(args), x);
+// const pipe = (...functions) => x => functions.reduce((args, fn) => fn(args), x);
