@@ -2,28 +2,54 @@ const input = [3, 4, 5, 4];
 const input2 = [4, 5, 2, 3, 4];
 
 const cuttingTree = A => {
-  const len = A.length;
-  let prev = A[0];
-  let i = 1;
-  const nonvalid = [];
-  
-  while (i < len) {
-    const current = A[i];
-    
-    if (prev <= current) {
-      prev = current;
-    } else {
-      // prev > current
-      nonvalid.push(current);
-      // prev = A[i - 1];
+  let count = 0;
+
+  const isConsecutive = arr => {
+    const len = arr.length;
+    let i = 1;
+    let prev = arr[0];
+
+    while (i < len) {
+      const curr = arr[i];
+      if (prev === curr) continue;
+      if (prev > curr) {
+        return false
+      }
+
+      prev = curr;
+      i++;
     }
 
-    i++;
+    return true;
   }
   
-  return nonvalid.length;
+  const loop = arr => {
+    const len = arr.length;
+    let i = 1;
+    let lastCheckValue = null;
+    
+    while (i < len) {
+      const currentValue = arr[i];
+      if (lastCheckValue === currentValue) {
+        i++;
+        continue;
+      } else {
+        lastCheckValue = currentValue;
+      }
+
+      const newArr = [].concat(arr);
+      newArr.splice(i, 1);
+      if (isConsecutive(newArr)) count++;
+      i++;
+    }
+
+    return false;
+  }
+
+  loop(A);
+  
+  return count;
 }
 
 console.log(cuttingTree(input));
-console.log(' ');
 console.log(cuttingTree(input2));
