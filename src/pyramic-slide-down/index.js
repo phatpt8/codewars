@@ -6,11 +6,11 @@ const input = [
 ];
 
 const traverse = (value, firstChoice, secondChoice) => {
-  if (firstChoice.check === fals) {
+  if (firstChoice.check === false) {
     firstChoice.check = true;
     return value + firstChoice.value;
   }
-  if (secondChoice.check === fals) {
+  if (secondChoice.check === false) {
     secondChoice.check = true;
     return value + secondChoice.value;
   }

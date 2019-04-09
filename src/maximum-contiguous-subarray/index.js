@@ -1,4 +1,4 @@
-const input = [-2, 1, 3, 4, -1, 2, 1, -5, 4];
+const input = [-2, -3, 4, -1, -2, 1, 5, -3];
 const output = [4, -1, 2, 1];
 
 const checkSum = (arr, start, end) => {

@@ -17,7 +17,6 @@ const pairBrackets = S => {
 
       if (opening.includes(char)) {
         stack.push(char);
-        lastOpening = char;
       } else if (closing.includes(char)) {
         if (char !== mapping[stack.pop()]) {
           result = false;
