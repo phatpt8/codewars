@@ -1,13 +1,15 @@
-(function(w, d, undefined){
-  w.solutions = {};
-  var solution = function(name, fn, ...rest) {
-    var r = fn.bind(null, ...rest);
-    w.solutions[name] = r;
-    return r;
+class Codewars {
+  constructor() {
+    this.myLevel = 'fresher';
+    this.myProgress = 70;
+    this.goals = {
+      fundamental: 100,
+      algorithms: 100,
+      implements: 100,
+    }
+    this.myCv = 'link-to-cv.mp3';
   }
-
-  var test1 = solution('test1', function(arr) {
-    console.log(arr.toString());
-  }, 1,2,3);
-
-}(window, document));
+  knowledge() {}
+  algorithms() {}
+  coolEffects() {}
+}
