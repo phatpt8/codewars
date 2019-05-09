@@ -23,3 +23,19 @@ function solution(arr, n) {
 }
 
 solution(inputArr, inputNumber);
+
+function solution2(arr, sum) {
+  const len = arr.length;
+  const set = new Set(arr);
+
+  for (let i = 0; i < len;i++) {
+    const temp = sum - arr[i];
+
+    if (set.has(temp)) {
+      return [arr[i], temp]
+    }
+  }
+
+  return 0;
+}
+solution2(inputArr, inputNumber);
