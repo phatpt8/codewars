@@ -23,6 +23,7 @@ function arrayShiftToEnd(array, n) {
   return array
 }
 
+// not working solution
 removeZeros(input);
 
 // function removeZeros(arr) {

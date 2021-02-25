@@ -9,8 +9,6 @@ function solution(arr, n) {
 
   while (i < j) {
 
-    console.log(i, j);
-
     if (ascArr[i] + ascArr[j] == n) {
       return [i, j];
     } else if (ascArr[i] + ascArr[j] < n) {
