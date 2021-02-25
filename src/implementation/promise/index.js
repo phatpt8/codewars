@@ -1,143 +1,89 @@
-function MyPromise(action) {
-  this.status = 'pending';
-  this.value = undefined;
-  this.thenCallbacks = [];
-  this.catchCallback = null;
-  this.finallyCallback = null;
-
-  this.then = function (func) {
-    this.thenCallback.push(func);
-    return this;
-  }
-
-  this.catch = function (func) {
-    this.catchCallback = func;
-    return this;
-  }
-
-  this.finally = function (func) {
-    this.finallyCallback = func;
-    return this;
-  }
-
-  action(resolver.bind(this), rejector.bind(this));
-
-  function resolver(value) {
-    this.status = 'resolved';
-    this.value = value;
-    this.thenCallbacks.forEach(function (func) {
-      func(this.value);
-    }, this);
-    if (this.finallyCallback) {
-      this.finallyCallback(this.value);
-    }
-  }
-
-  function rejector(value) {
-    this.status = 'rejected';
-    this.value = value;
-
-    if (this.catchCallback) {
-      this.catchCallback(this.value);
-    }
-
-    if (this.finallyCallback) {
-      this.finallyCallback(this.value);
-    }
-  }
-}
-
-const states = {
-  resolved: 'resolved',
-  rejected: 'rejected',
-  pending: 'pending'
-}
-
 class Bromise {
-  constructor(action) {
-    const gears = {
-      [states.resolved]: {
-        state: states.resolved,
-        // chain mechanism
-        then: onResolved => Bromise.resolve(onResolved(this.value)),
-        catch: _ => this,
+  constructor(callback) {
+    this.value = null
+    const states = {
+      Pending: 'pending',
+      Resolved: 'resolved',
+      Rejected: 'rejected'
+    }
+    const tryCall = callback => Bromise.try(() => callback(this.value))
+    const laterCalls = []
+    const callLater = thenOrCatch => callback => new Bromise(resolve => laterCalls.push(() => resolve(thenOrCatch()(callback))))
+    const adapters = {
+      [states.Pending]: {
+        state: states.Pending,
+        then: callLater(() => this.then),
+        catch: callLater(() => this.catch),
       },
-      [states.rejected]: {
-        state: states.rejected,
-        // ignore mechanism
-        then: _ => this,
+      [states.Resolved]: {
+        state: states.Resolved,
+        then: tryCall,
+        catch: () => this,
+      },
+      [states.Rejected]: {
+        state: states.Rejected,
+        then: () => this,
         catch: tryCall,
-      },
-      [states.pending]: {
-        state: states.pending,
+      }
+    }
+    const changeState = state => Object.assign(this, adapters[state])
+
+    const getCallback = state => value => {
+      if (value instanceof Bromise && state == states.Resolved) {
+        value.then(v => apply(states.Resolved, v))
+        value.catch(v => apply(states.Rejected, v))
+      } else {
+        apply(state, value)
       }
     }
 
-    const tryCall = callback => Bromise.try(() => callback(this.value));
-    const changeState = state => Object.assign(this, gears[state]);
-    const getCallback = state => value => {
-      this.value = value;
-      changeState(state);
+    const apply = (state, value) => {
+      if (this.state === states.Pending) {
+        this.value = value
+        changeState(state)
+        laterCalls.forEach(call => call())
+      }
+     
     }
 
-    const resolver = getCallback(states.resolved);
-    const rejector = getCallback(states.rejected);
-    changeState(states.pending);
+    const resolver = getCallback(states.Resolved)
+    const rejecter = getCallback(states.Rejected)
+
+    changeState(states.Pending)
 
     try {
-      action(resolver, rejector);
-    } catch (err) {
-      rejector(err);
+      callback(resolver, rejecter)
+    } catch (e) {
+      rejecter(e)
     }
   }
 
   static resolve(value) {
-    return new Bromise(resolve => resolve(value));
+    return new Bromise(resolve => resolve(value))
   }
 
   static reject(value) {
-    return new Bromise((_, reject) => reject(value));
+    return new Bromise(reject => reject(value))
   }
 
   static try(callback) {
-    return new Bromise(resolve => resolve(callback()));
+    return new Bromise(resolve => resolve(callback()))
   }
 }
 
+// Testing
+let p = new Bromise(resolve => resolve('Resolved'))
+p.then(v => console.log(v)).catch()
 
+let p1 = new Bromise((_, reject) => reject('Rejected'))
+p1.then().catch(v => console.log(v))
 
-class Bromise2 {
-  constructor(action) {
-    const gears = {
-      [states.resolved]: {
-        state: states.resolved,
-        then: onResolved => Bromise2.resolve(onResolved(this.value)),
-      },
-      [states.rejected]: {
-        state: states.rejected,
-        then: _ => this,
-      },
-      [states.pending]: {
-        state: states.pending
-      }
-    }
+let p2 = new Bromise(() => {
+  throw 'cc'
+})
+p2.then(v => console.log('then' + v)).catch(v => console.log('catch:' + v))
 
-    const changeState = state => Object.assign(this, gears[state]);
-    const tryCallback = state => value => {
-      this.value = value;
-      changeState(state);
-    }
-    const resolve = tryCallback(states.resolved);
-    const reject = tryCallback(states.rejected);
-
-    action(resolve, reject);
-  }
-
-  static resolve(value) {
-    return new Bromise2(resolve => resolve(value));
-  }
-
-  static reject(value) {
-    return new Bromise2((_, reject) => reject(value));
-  }
-}
+let p3 = new Bromise(resolve => {
+  setTimeout(() => resolve('Resolved after 200ms'), 200)
+})
+p3.then(v => console.log(v)).catch(v => console.log('catch:' + v))
