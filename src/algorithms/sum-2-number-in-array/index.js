@@ -22,7 +22,7 @@ function solution(arr, n) {
 
 solution(inputArr, inputNumber);
 
-function solution2(arr, sum) {
+function solution2(arr, sum) {  
   const len = arr.length;
   const set = new Set(arr);
 
